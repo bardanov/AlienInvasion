@@ -28,6 +28,7 @@ class HuggyWuggy:
             self._check_screen_updates()
             self._bullets_update()
             self._create_fleet()
+            self._aliens_update()
 
     def _check_events(self):
         """Respond to keys and mouse input."""
@@ -104,6 +105,24 @@ class HuggyWuggy:
         alien.rect.x = alien.x
         alien.rect.y = alien.rect.height + 2 * alien.rect.height * rows_number 
         self.aliens.add(alien)
+
+    def _aliens_update(self):
+        """Update the aliens' position on the screen."""
+        self.aliens.update()
+        self._check_fleet_edge()
+
+    def _check_fleet_edge(self):
+        """Respond appropriately if any of aliens reach the screen edge."""
+        for alien in self.aliens.sprites():
+            if alien.check_edges():
+                self._change_fleet_direction()
+                break
+
+    def _change_fleet_direction(self):
+        """Drop the fleet row down and change the direction on x-coord."""
+        for alien in self.aliens.sprites():
+            alien.rect.y += self.settings.fleet_drop_speed
+        self.settings.fleet_direction *= -1
 
     def _check_screen_updates(self):
         """Check the screen updates and surface movements."""
