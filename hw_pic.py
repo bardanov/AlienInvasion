@@ -32,3 +32,7 @@ class Huggy:
             self.rect.y -= self.settings.huggy_speed
         elif self.moving_down and self.rect.bottom < self.screen_rect.bottom:
             self.rect.y += self.settings.huggy_speed
+
+    def center_ship(self):
+        """Put the ship in the center of the screen."""
+        self.rect.midbottom = self.screen_rect.midbottom

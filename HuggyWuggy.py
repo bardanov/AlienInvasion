@@ -1,9 +1,11 @@
 import pygame, sys
+from time import sleep
 
 from hw_settings import Settings
 from hw_pic import Huggy
 from huggy_bullet import Bullet
 from alieeeenz import Alieenz
+from game_stats import GameStats
 
 class HuggyWuggy:
     """Main class representing the development of the game."""
@@ -15,20 +17,23 @@ class HuggyWuggy:
         self.settings.screen_width = self.screen.get_rect().width 
         self.settings.screen_height = self.screen.get_rect().height
         self.bg_color = (self.settings.bg_color)
+        self.stats = GameStats(self)
         self.huggy = Huggy(self)
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
         pygame.display.set_caption('Huggy Wuggy')
 
+        self._create_fleet()
+
     def run_game(self):
         """Main loop for launching the game and updating screen and input."""
         while True:
-            self.huggy.update()
             self._check_events()
-            self._check_screen_updates()
-            self._bullets_update()
-            self._create_fleet()
-            self._aliens_update()
+            if self.stats.game_active == True:
+                self.huggy.update()
+                self._check_screen_updates()
+                self._bullets_update()
+                self._aliens_update()
 
     def _check_events(self):
         """Respond to keys and mouse input."""
@@ -77,11 +82,21 @@ class HuggyWuggy:
     def _bullets_update(self):
         """Update the bullets and get rid of old ones."""
         self.bullets.update()
+        self._check_bullets_aliens_collide()
 
         for bullet in self.bullets.copy():
             if bullet.rect.y <= 0:
                 self.bullets.remove(bullet)
         #print(len(self.bullets))
+
+    def _check_bullets_aliens_collide(self):
+        """Respond appropriately to the aliens and bullets collisions."""
+        collisions = pygame.sprite.groupcollide(
+            self.bullets, self.aliens, True, True)
+
+        if not self.aliens:
+            self.bullets.empty()
+            self._create_fleet()
 
     def _create_fleet(self):
         """Create a fleet of aliens."""
@@ -110,7 +125,30 @@ class HuggyWuggy:
         """Update the aliens' position on the screen."""
         self.aliens.update()
         self._check_fleet_edge()
+        self._check_aliens_bottom()
 
+        if pygame.sprite.spritecollideany(self.huggy, self.aliens):
+            self._ship_hit()
+
+    def _ship_hit(self):
+        """Respond if aliens manage to hit the ship."""
+        if self.stats.ships_left > 0:
+            self.stats.ships_left -= 1
+            self.bullets.empty()
+            self.aliens.empty()
+            self._create_fleet()
+            self.huggy.center_ship()
+            sleep(0.5)
+        else:
+            self.stats.game_active = False
+
+    def _check_aliens_bottom(self):
+        """Respond if aliens manage to reach the bottom."""
+        screen_rect = self.screen.get_rect()
+        for alien in self.aliens.sprites():
+            if alien.rect.bottom >= screen_rect.bottom:
+                self._ship_hit()
+                break
     def _check_fleet_edge(self):
         """Respond appropriately if any of aliens reach the screen edge."""
         for alien in self.aliens.sprites():
