@@ -6,6 +6,7 @@ from hw_pic import Huggy
 from huggy_bullet import Bullet
 from alieeeenz import Alieenz
 from game_stats import GameStats
+from button import Button
 
 class HuggyWuggy:
     """Main class representing the development of the game."""
@@ -22,6 +23,7 @@ class HuggyWuggy:
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
         pygame.display.set_caption('Huggy Wuggy')
+        self.button = Button(self, 'Play Game')
 
         self._create_fleet()
 
@@ -31,9 +33,10 @@ class HuggyWuggy:
             self._check_events()
             if self.stats.game_active == True:
                 self.huggy.update()
-                self._check_screen_updates()
                 self._bullets_update()
                 self._aliens_update()
+            self._check_screen_updates()
+
 
     def _check_events(self):
         """Respond to keys and mouse input."""
@@ -44,6 +47,21 @@ class HuggyWuggy:
                 self._check_keydown_events(event)
             elif event.type == pygame.KEYUP:
                 self._check_keyup_events(event)
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                self._check_play_button(mouse_pos)
+
+    def _check_play_button(self, mouse_pos):
+        """Start game if the Play button is pushed."""
+        button_clicked = self.button.rect.collidepoint(mouse_pos)
+        if button_clicked and not self.stats.game_active:
+            self.stats.reset_stats()
+            self.stats.game_active = True
+            self.aliens.empty()
+            self.bullets.empty()
+            self._create_fleet()
+            self.huggy.center_ship()
+            pygame.mouse.set_visible(False)
                 
     def _check_keydown_events(self, event):
         """Respond to key presses."""
@@ -61,6 +79,19 @@ class HuggyWuggy:
             self.huggy.moving_down = True
         elif event.key == pygame.K_SPACE:
             self._fire_bullet()
+        elif event.key == pygame.K_p:
+            self._start_game()
+
+    def _start_game(self):
+        """Start game if the P button is pressed."""
+        if not self.stats.game_active:
+            self.stats.reset_stats()
+            self.stats.game_active = True
+            self.aliens.empty()
+            self.bullets.empty()
+            self._create_fleet()
+            self.huggy.center_ship()
+            pygame.mouse.set_visible(False)
 
     def _check_keyup_events(self, event):
         """Respond to key releases."""
@@ -141,6 +172,7 @@ class HuggyWuggy:
             sleep(0.5)
         else:
             self.stats.game_active = False
+            pygame.mouse.set_visible(True)
 
     def _check_aliens_bottom(self):
         """Respond if aliens manage to reach the bottom."""
@@ -171,6 +203,10 @@ class HuggyWuggy:
             bullet.draw_bullet()
 
         self.aliens.draw(self.screen)
+
+        if not self.stats.game_active:
+            self.button.draw_button()
+
         pygame.display.flip()
 
 if __name__ == '__main__':
