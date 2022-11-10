@@ -37,7 +37,6 @@ class HuggyWuggy:
                 self._aliens_update()
             self._check_screen_updates()
 
-
     def _check_events(self):
         """Respond to keys and mouse input."""
         for event in pygame.event.get():
@@ -55,13 +54,7 @@ class HuggyWuggy:
         """Start game if the Play button is pushed."""
         button_clicked = self.button.rect.collidepoint(mouse_pos)
         if button_clicked and not self.stats.game_active:
-            self.stats.reset_stats()
-            self.stats.game_active = True
-            self.aliens.empty()
-            self.bullets.empty()
-            self._create_fleet()
-            self.huggy.center_ship()
-            pygame.mouse.set_visible(False)
+            self._start_game()
                 
     def _check_keydown_events(self, event):
         """Respond to key presses."""
@@ -92,6 +85,7 @@ class HuggyWuggy:
             self._create_fleet()
             self.huggy.center_ship()
             pygame.mouse.set_visible(False)
+            self.settings.initialize_dynamic_settings()
 
     def _check_keyup_events(self, event):
         """Respond to key releases."""
@@ -128,6 +122,7 @@ class HuggyWuggy:
         if not self.aliens:
             self.bullets.empty()
             self._create_fleet()
+            self.settings.increase_speed()
 
     def _create_fleet(self):
         """Create a fleet of aliens."""
@@ -181,6 +176,7 @@ class HuggyWuggy:
             if alien.rect.bottom >= screen_rect.bottom:
                 self._ship_hit()
                 break
+
     def _check_fleet_edge(self):
         """Respond appropriately if any of aliens reach the screen edge."""
         for alien in self.aliens.sprites():
