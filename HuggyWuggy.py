@@ -7,6 +7,7 @@ from huggy_bullet import Bullet
 from alieeeenz import Alieenz
 from game_stats import GameStats
 from button import Button
+from scoreboard import Scoreboard
 
 class HuggyWuggy:
     """Main class representing the development of the game."""
@@ -24,6 +25,7 @@ class HuggyWuggy:
         self.aliens = pygame.sprite.Group()
         pygame.display.set_caption('Huggy Wuggy')
         self.button = Button(self, 'Play Game')
+        self.sb = Scoreboard(self)
 
         self._create_fleet()
 
@@ -79,6 +81,7 @@ class HuggyWuggy:
         """Start game if the P button is pressed."""
         if not self.stats.game_active:
             self.stats.reset_stats()
+            self.sb.prep_score()
             self.stats.game_active = True
             self.aliens.empty()
             self.bullets.empty()
@@ -123,6 +126,11 @@ class HuggyWuggy:
             self.bullets.empty()
             self._create_fleet()
             self.settings.increase_speed()
+
+        if collisions:
+            for aliens in collisions.values():
+                self.stats.score += self.settings.alien_points * len(aliens)
+                self.sb.prep_score()
 
     def _create_fleet(self):
         """Create a fleet of aliens."""
@@ -199,6 +207,8 @@ class HuggyWuggy:
             bullet.draw_bullet()
 
         self.aliens.draw(self.screen)
+
+        self.sb.show_score()
 
         if not self.stats.game_active:
             self.button.draw_button()
