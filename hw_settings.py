@@ -18,7 +18,7 @@ class Settings:
         """Initialize settings that change throughout the game."""
         self.huggy_speed = 1.5
         self.bullet_speed = 0.5
-        self.aliens_speed = 0.4
+        self.aliens_speed = 0.3
         self.fleet_drop_speed = 10
         self.fleet_direction = 1
         self.alien_points = 50

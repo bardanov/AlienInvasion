@@ -13,8 +13,8 @@ class Huggy:
         self.rect.midbottom = self.screen_rect.midbottom
         self.moving_right = False
         self.moving_left = False
-        self.moving_up = False
-        self.moving_down = False
+        #self.moving_up = False
+        #self.moving_down = False
         self.x = float(self.rect.x)
         self.y = float(self.rect.y)
 
@@ -28,10 +28,14 @@ class Huggy:
             self.rect.x += self.settings.huggy_speed
         elif self.moving_left and self.rect.left > 0:
             self.rect.x -= self.settings.huggy_speed
-        elif self.moving_up and self.rect.top > 0:
-            self.rect.y -= self.settings.huggy_speed
-        elif self.moving_down and self.rect.bottom < self.screen_rect.bottom:
-            self.rect.y += self.settings.huggy_speed
+        # elif self.moving_up and self.rect.top > 0:
+        #     self.rect.y -= self.settings.huggy_speed
+        # elif self.moving_down and self.rect.bottom < self.screen_rect.bottom:
+        #     self.rect.y += self.settings.huggy_speed
+
+        # I turn off this block of code because the current version of the game
+        # doesn't need the character to go up or down, only right of left. This 
+        # was just my part of self studies and the possibilities exploration.
 
     def center_ship(self):
         """Put the ship in the center of the screen."""

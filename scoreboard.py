@@ -13,7 +13,6 @@ class Scoreboard:
         self.prep_score()
         self.prep_highscore()
         self.prep_level()
-        self.huggame._l_ships()
 
     def prep_score(self):
         """Turn the str into a rendered image."""
@@ -55,3 +54,5 @@ class Scoreboard:
         self.screen.blit(self.score_image, self.score_rect)
         self.screen.blit(self.highscore_image, self.highscore_rect)
         self.screen.blit(self.level_image, self.level_rect)
+        # These are all used to be drawn to the screen with the 'blit' function.
+        # Guess because they are not made sprites.

@@ -21,3 +21,5 @@ class Bullet(Sprite):
     def draw_bullet(self):
         """Draw the bullet to the screen."""
         pygame.draw.rect(self.screen, self.color, self.rect)
+        # This rect is drawn to the screen with a different function. Guess
+        # because it is made to be sprites.
