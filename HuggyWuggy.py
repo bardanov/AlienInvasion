@@ -8,6 +8,7 @@ from alieeeenz import Alieenz
 from game_stats import GameStats
 from button import Button
 from scoreboard import Scoreboard
+from left_ships import LeftShips
 
 class HuggyWuggy:
     """Main class representing the development of the game."""
@@ -21,6 +22,7 @@ class HuggyWuggy:
         self.bg_color = (self.settings.bg_color)
         self.stats = GameStats(self)
         self.huggy = Huggy(self)
+        self.l_ships = pygame.sprite.Group()
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
         pygame.display.set_caption('Huggy Wuggy')
@@ -86,9 +88,28 @@ class HuggyWuggy:
             self.aliens.empty()
             self.bullets.empty()
             self._create_fleet()
+            self._l_ships()
             self.huggy.center_ship()
             pygame.mouse.set_visible(False)
             self.settings.initialize_dynamic_settings()
+
+    def _l_ships(self):
+        """Show how many ships are left."""
+        l_ship = LeftShips(self)
+
+        for ship_number in range(self.stats.ships_left):
+            l_ship = LeftShips(self)
+            l_ship.x = 10 + ship_number * l_ship.rect.width
+            l_ship.rect.x = l_ship.x
+            l_ship.rect.y = 20
+            self.l_ships.add(l_ship)
+
+    def count_lships(self):
+        """Check the amount of ships left."""
+        for ship in self.l_ships.copy():
+            self.l_ships.remove(ship)
+
+            self._l_ships()
 
     def _check_keyup_events(self, event):
         """Respond to key releases."""
@@ -156,6 +177,7 @@ class HuggyWuggy:
         alien.x = alien_width + 2 * alien_width * aliens_number
         alien.rect.x = alien.x
         alien.rect.y = alien.rect.height + 2 * alien.rect.height * rows_number 
+        alien.rect.y += 27
         self.aliens.add(alien)
 
     def _aliens_update(self):
@@ -169,13 +191,15 @@ class HuggyWuggy:
 
     def _ship_hit(self):
         """Respond if aliens manage to hit the ship."""
-        if self.stats.ships_left > 0:
+        if self.stats.ships_left > 1:
             self.stats.ships_left -= 1
+            self.count_lships()
             self.bullets.empty()
             self.aliens.empty()
             self._create_fleet()
             self.huggy.center_ship()
             sleep(0.5)
+
         else:
             self.stats.game_active = False
             pygame.mouse.set_visible(True)
@@ -212,6 +236,8 @@ class HuggyWuggy:
         self.aliens.draw(self.screen)
 
         self.sb.show_score()
+
+        self.l_ships.draw(self.screen)
 
         if not self.stats.game_active:
             self.button.draw_button()

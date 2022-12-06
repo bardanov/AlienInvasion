@@ -5,6 +5,7 @@ class Scoreboard:
     def __init__(self, huggame):
         self.screen = huggame.screen
         self.screen_rect = self.screen.get_rect()
+        self.huggame = huggame
         self.settings = huggame.settings
         self.stats = huggame.stats
         self.text_color = (30, 30, 30)
@@ -12,6 +13,7 @@ class Scoreboard:
         self.prep_score()
         self.prep_highscore()
         self.prep_level()
+        self.huggame._l_ships()
 
     def prep_score(self):
         """Turn the str into a rendered image."""

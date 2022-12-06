@@ -9,7 +9,7 @@ class Settings:
         self.bullet_width = 13
         self.bullet_height = 13
         self.bullets_allowed = 2
-        self.ships_limit = 2
+        self.ships_limit = 3
         self.speedup_scale = 1.1
         self.scoreup_scale = 1.5
         self.initialize_dynamic_settings()
